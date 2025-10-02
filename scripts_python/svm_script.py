@@ -137,29 +137,29 @@ print('Generalization score for linear kernel: %s, %s' %
 #%%
 # Q2 polynomial kernel
 Cs = list(np.logspace(-3, 3, 5))
-gammas = 10. ** np.arange(1, 2)
+gammas = 10. ** np.arange(-2, 2)  # gamma = [0.01, 0.1, 1, 10]
 degrees = np.r_[1, 2, 3]
 
-# fit the model and select the best set of hyperparameters
 parameters = {'kernel': ['poly'], 'C': Cs, 'gamma': gammas, 'degree': degrees}
-# ... TODO
-clf_poly = # ... TODO
-# ... TODO
 
-print(clf_grid.best_params_)
-print('Generalization score for polynomial kernel: %s, %s' %
-      (clf_poly.score(X_train, y_train),
-       clf_poly.score(X_test, y_test)))
+svm = SVC()
+
+clf_grid = GridSearchCV(svm, parameters, cv=5)
+clf_grid.fit(X_train, y_train)
+
+print("Best parameters:", clf_grid.best_params_)
+print(f'Generalization score (train, test) for polynomial kernel: '
+      f'{clf_grid.score(X_train, y_train):.3f}, {clf_grid.score(X_test, y_test):.3f}')
 
 
 #%%
 # display your results using frontiere (svm_source.py)
 
 def f_linear(xx):
-    # ... TODO
+    return clf_linear.predict(xx.reshape(1, -1))
 
 def f_poly(xx):
-    # ... TODO
+    return clf_grid.predict(xx.reshape(1, -1))
 
 plt.ion()
 plt.figure(figsize=(15, 5))
