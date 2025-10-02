@@ -42,7 +42,6 @@ y_pred_linear = svm_linear.predict(X_test)
 score_linear = svm_linear.score(X_test, y_test)
 print('Score du modèle linéaire : %s' % score_linear)
 
-
 # Plot
 plot_2d(X,y)
 ```
@@ -205,6 +204,7 @@ Ici, on voit l'action du paramètre C, la frontière se déplace dans les diffé
 import sys
 sys.path.append("scripts_python") # pour aller chercher la fonction de svm_source
 
+import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_lfw_people
 import numpy as np
 from svm_source import plot_gallery
