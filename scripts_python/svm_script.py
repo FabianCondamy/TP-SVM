@@ -299,7 +299,8 @@ t0 = time()
 
 #%%
 # predict labels for the X_test images with the best classifier
-# clf =  ... TODO
+clf = clfs[ind]   # on récupère le meilleur classifieur trouvé
+y_pred = clf.predict(X_test)
 
 print("done in %0.3fs" % (time() - t0))
 # The chance level is the accuracy that will be reached when constantly predicting the majority class.
