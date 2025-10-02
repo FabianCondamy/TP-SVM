@@ -5,11 +5,14 @@ author: "Fabian Condamy et Samy M'Rad"
 jupyter: python3
 ---
 
+L'objectif de ce TP est de se familiariser avec la méthode de classification dite de Support Vector Machine (SVM). Dans la suite, on implémentera cette technique sur différents jeux de données réels et simulés grâce au package scikit-learn de Python. On se concentrera principalement sur la compréhension et la maîtrise des principaux paramètres afin d’en ajuster la flexibilité et d’en évaluer l’impact sur les performances.
+
+
 **Question 1**
 
-```{python}
+```{python, echo=false}
 import sys
-sys.path.append("scripts_python") # pour aller chercher la fonction de svm_source
+sys.path.append("scripts_python") # pour aller chercher la fonction de svm_source dans le sous dossier
 import numpy as np
 from sklearn import datasets
 import matplotlib.pyplot as plt
@@ -51,7 +54,7 @@ frontiere(f_linear, X, y)
 plt.title("linear kernel")
 ```
 
-On obtient ici un taux de réussite de 76% avec un nombre de bonnes prédictions de 38 (sur les 50 données au total).
+Pour cet aléa précis, on trouve un score de 0,64, ce qui est faible. Comme on peut le voir sur le jeu de données iris, les deux classes sont bien mélangées, ce qui peut expliquer ce score médiocre. 
 
 ```{python}
 # Définition des hyperparamètres à tester
@@ -69,7 +72,8 @@ print("Score généralisé pour le noyau linéaire : Train : %.3f | Test : %.3f"
        svm_linear_opt.score(X_test, y_test)))
 ```
 
-
+Pour le score généralisé, on trouve une performance de 0,707 pour la partie d'apprentissage et 0,680 pour la partie de test. Ainsi, même en essayant d'optimiser le noyau linéaire, la précision est faible.
+On va maintenant voir si une méthode polynomiale peut améliorer ce score.
 
 **Question 2**
 
@@ -98,7 +102,7 @@ frontiere(f_poly, X, y)
 plt.title("Noyau polynomial")
 ```
 
-Ici, on obtient un taux de réussite de 68%, donc légérèment plus faible qu'auparavant.
+Pour un noyau polynomial et cet aléa, on trouve un score de 0,6, ce qui est encore plus faible que pour le noyau linéaire. Ce résultat peut sembler assez paradoxal de prime abord, mais il semble en réalité logique au vu de la structure des données, le modèle a dû certainement overfitter.
 
 ```{python}
 Cs = list(np.logspace(-3, 3, 5))
@@ -118,6 +122,10 @@ print("Score généralisé pour le noyau polynomial : Train : %.3f | Test : %.3f
       (svm_poly_opt.score(X_train, y_train),
        svm_poly_opt.score(X_test, y_test)))
 ```
+
+Pour les paramètres généralisés, on trouve un score de 0,707 pour la partie d'apprentissage et 0,64 pour le test. Ainsi, on a le même score généralisé que pour le noyau linéaire pour la partie apprentissage, mais lorsqu'on l'applique à la partie de test, on perd plus en précision que pour le modèle linéaire.
+
+Ainsi, ces 2 classes du jeu de données iris semble très difficiles à séparer, la méthode de SVM est peu adaptée ici.
 
 **Question 3 (facultative)**
 
