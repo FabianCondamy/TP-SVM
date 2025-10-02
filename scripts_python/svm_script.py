@@ -97,20 +97,38 @@ y = y[y != 0]
 # split train test (say 25% for the test)
 # You can shuffle and then separate or you can just use train_test_split 
 #whithout shuffling (in that case fix the random state (say to 42) for reproductibility)
-# ... TODO
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
 ###############################################################################
 # fit the model with linear vs polynomial kernel
+svm_linear = SVC(kernel='linear')
+svm_linear.fit(X_train, y_train)
+y_pred_linear = svm_linear.predict(X_test)
+score_linear = svm_linear.score(X_test, y_test)
+print('Score du modèle linéaire : %s' % score_linear)
+
+svm_poly = SVC(kernel='poly')
+svm_poly.fit(X_train, y_train)
+y_pred_poly = svm_poly.predict(X_test)
+score_poly = svm_poly.score(X_test, y_test)
+print('Score du modèle polynomial : %s' % score_poly)
 ###############################################################################
 
 #%%
 # Q1 Linear kernel
 
-# fit the model and select the best hyperparameter C
+# Définition des hyperparamètres à tester
 parameters = {'kernel': ['linear'], 'C': list(np.logspace(-3, 3, 200))}
-# ... TODO
-clf_linear = # ... TODO
 
-# compute the score
+# Créer le modèle SVM (ici juste l'objet, le kernel sera défini par GridSearchCV)
+svm = SVC()
+
+# GridSearchCV pour trouver le meilleur C
+clf_linear = GridSearchCV(svm, parameters, cv=5)  # cv=5 : validation croisée 5 folds
+clf_linear.fit(X_train, y_train)  # entraîner sur le train set
 
 print('Generalization score for linear kernel: %s, %s' %
       (clf_linear.score(X_train, y_train),

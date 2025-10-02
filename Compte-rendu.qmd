@@ -14,39 +14,37 @@ import numpy as np
 from sklearn import datasets
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from svm_source import plot_2d
 
-# Chargement du jeu de données
+scaler = StandardScaler()
+
 iris = datasets.load_iris()
 X = iris.data
+X = scaler.fit_transform(X)
 y = iris.target
-
-# Sélection des bonnes variables
 X = X[y != 0, :2]
 y = y[y != 0]
 
-# Séparation de la moitié des données
+# split train test (say 25% for the test)
+# You can shuffle and then separate or you can just use train_test_split 
+#whithout shuffling (in that case fix the random state (say to 42) for reproductibility)
+
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.5, random_state=42, stratify=y
+    X, y, test_size=0.25, random_state=42, stratify=y
 )
 
-# Modèle SVM à noyau linéaire de sklearn
-svm = SVC(kernel='linear')
-svm.fit(X_train, y_train)
+###############################################################################
+# fit the model with linear vs polynomial kernel
+svm_linear = SVC(kernel='linear')
+svm_linear.fit(X_train, y_train)
+y_pred_linear = svm_linear.predict(X_test)
+score_linear = svm_linear.score(X_test, y_test)
+print('Score du modèle linéaire : %s' % score_linear)
 
-# Prédiction réalisée sur la partie test après train
-y_pred = svm.predict(X_test)
 
 # Plot
-plot_2d(X,Y)
-
-# Évaluation
-correct = np.sum(y_pred == y_test)
-total = len(y_test)
-accuracy = correct / total
-
-print(f"Nombre de bonnes prédictions : {correct}/{total}")
-print(f"Taux de réussite : {accuracy * 100:.2f}%")
+plot_2d(X,y)
 ```
 
 On obtient ici un taux de réussite de 76% avec un nombre de bonnes prédictions de 38 (sur les 50 données au total).
@@ -94,10 +92,13 @@ Commençons par générer le jeu de données très déséquilibré :
 
 
 ```{python}
+import sys
+sys.path.append("scripts_python") # pour aller chercher la fonction de svm_source
+
 import numpy as np
 from sklearn.svm import SVC
 import matplotlib.pyplot as plt
-
+from svm_source import *
 # Création du jeu de données
 
 n = 1000 # nombre d'observations
