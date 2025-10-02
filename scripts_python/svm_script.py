@@ -247,7 +247,7 @@ X /= np.std(X, axis=0)
 #%%
 ####################################################################
 # Split data into a half training and half test set
- X_train, X_test, y_train, y_test, images_train, images_test = \
+X_train, X_test, y_train, y_test, images_train, images_test = \
     train_test_split(X, y, images, test_size=0.5, random_state=0)
 # X_train, X_test, y_train, y_test = \
 #    train_test_split(X, y, test_size=0.5, random_state=0)
@@ -325,7 +325,6 @@ plt.show()
 
 #%%
 # Q5
-
 def run_svm_cv(_X, _y):
     _indices = np.random.permutation(_X.shape[0])
     _train_idx, _test_idx = _indices[:_X.shape[0] // 2], _indices[_X.shape[0] // 2:]
@@ -341,7 +340,8 @@ def run_svm_cv(_X, _y):
           (_clf_linear.score(_X_train, _y_train), _clf_linear.score(_X_test, _y_test)))
 
 print("Score sans variable de nuisance")
-# TODO ... use run_svm_cv on original data
+
+run_svm_cv(X,y)
 
 print("Score avec variable de nuisance")
 n_features = X.shape[1]
@@ -351,7 +351,8 @@ noise = sigma * np.random.randn(n_samples, 300, )
 #with gaussian coefficients of std sigma
 X_noisy = np.concatenate((X, noise), axis=1)
 X_noisy = X_noisy[np.random.permutation(X.shape[0])]
-# TODO ... use run_svm_cv on noisy data
+
+run_svm_cv(X_noisy,y)
 
 #%%
 # Q6
