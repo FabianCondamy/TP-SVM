@@ -361,4 +361,8 @@ print("Score apres reduction de dimension")
 
 n_components = 20  # jouer avec ce parametre
 pca = PCA(n_components=n_components).fit(X_noisy)
-# ... TODO Apply PCA and run_svm to the noisy data
+
+X_reduced = pca.fit_transform(X_noisy)
+
+# On relance le SVM sur les données réduites
+run_svm_cv(X_reduced, y)
