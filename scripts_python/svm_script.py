@@ -348,7 +348,7 @@ print("Score avec variable de nuisance")
 n_features = X.shape[1]
 # On rajoute des variables de nuisances
 sigma = 1
-noise = sigma * np.random.randn(n_samples, 300, ) 
+noise = sigma * np.random.randn(n_samples, 50, ) 
 #with gaussian coefficients of std sigma
 X_noisy = np.concatenate((X, noise), axis=1)
 X_noisy = X_noisy[np.random.permutation(X.shape[0])]
@@ -366,3 +366,5 @@ X_reduced = pca.fit_transform(X_noisy)
 
 # On relance le SVM sur les données réduites
 run_svm_cv(X_reduced, y)
+
+# %%
