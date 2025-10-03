@@ -359,7 +359,22 @@ run_svm_cv(X_noisy,y)
 # Q6
 print("Score apres reduction de dimension")
 
-n_components = 20  # jouer avec ce parametre
+# changement de la fonction pour qu'elle soit plus rapide (environ 5min)
+def run_svm_cv(_X, _y):
+    _indices = np.random.permutation(_X.shape[0])
+    _train_idx, _test_idx = _indices[:_X.shape[0] // 2], _indices[_X.shape[0] // 2:]
+    _X_train, _X_test = _X[_train_idx, :], _X[_test_idx, :]
+    _y_train, _y_test = _y[_train_idx], _y[_test_idx]
+
+    _parameters = {'kernel': ['linear'], 'C': list(np.logspace(-3, 3, 5))}
+    _svr = svm.SVC()
+    _clf_linear = GridSearchCV(_svr, _parameters, cv=4, n_jobs=-1)
+    _clf_linear.fit(_X_train, _y_train)
+
+    print('Generalization score for linear kernel: %s, %s \n' %
+          (_clf_linear.score(_X_train, _y_train), _clf_linear.score(_X_test, _y_test)))
+
+n_components = 5  # jouer avec ce parametre
 pca = PCA(n_components=n_components).fit(X_noisy)
 
 X_reduced = pca.fit_transform(X_noisy)

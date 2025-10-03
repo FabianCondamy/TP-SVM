@@ -105,7 +105,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>L’objectif de ce TP est de se familiariser avec la méthode de classification dite de Support Vector Machine (SVM). Dans la suite, on implémentera cette technique sur différents jeux de données réels et simulés grâce au package scikit-learn de Python. On se concentrera principalement sur la compréhension et la maîtrise des principaux paramètres afin d’en ajuster la flexibilité et d’en évaluer l’impact sur les performances.</p>
 <p><strong>Question 1</strong></p>
-<div id="bbb362b0" class="cell" data-execution_count="1">
+<div id="9dc93ab3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="st">"scripts_python"</span>) <span class="co"># pour aller chercher la fonction de svm_source dans le sous dossier</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -150,7 +150,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code>Score du modèle linéaire : 0.64</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="1">
 <pre><code>Text(0.5, 1.0, 'linear kernel')</code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -162,7 +162,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Pour cet aléa précis, on trouve un score de 0,64, ce qui est faible. Comme on peut le voir sur le jeu de données iris, les deux classes sont bien mélangées, ce qui peut expliquer ce score médiocre.</p>
-<div id="d447e3be" class="cell" data-execution_count="2">
+<div id="35c91d07" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Définition des hyperparamètres à tester</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>parameters <span class="op">=</span> {<span class="st">'kernel'</span>: [<span class="st">'linear'</span>], <span class="st">'C'</span>: <span class="bu">list</span>(np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">200</span>))}</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -182,7 +182,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Pour le score généralisé, on trouve une performance de 0,707 pour la partie d’apprentissage et 0,680 pour la partie de test. Ainsi, même en essayant d’optimiser le noyau linéaire, la précision est faible. On va maintenant voir si une méthode polynomiale peut améliorer ce score.</p>
 <p><strong>Question 2</strong></p>
-<div id="11261270" class="cell" data-execution_count="3">
+<div id="b5ac6d57" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    X, y, test_size<span class="op">=</span><span class="fl">0.25</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>y</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -208,7 +208,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output cell-output-stdout">
 <pre><code>Score du modèle linéaire : 0.6</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>Text(0.5, 1.0, 'Noyau polynomial')</code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -220,7 +220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Pour un noyau polynomial et cet aléa, on trouve un score de 0,6, ce qui est encore plus faible que pour le noyau linéaire. Ce résultat peut sembler assez paradoxal de prime abord, mais il semble en réalité logique au vu de la structure des données, le modèle a dû certainement overfitter.</p>
-<div id="a4208145" class="cell" data-execution_count="4">
+<div id="237f58da" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Cs <span class="op">=</span> <span class="bu">list</span>(np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">5</span>))</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>gammas <span class="op">=</span> <span class="fl">10.</span> <span class="op">**</span> np.arange(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)  <span class="co"># gamma = [0.01, 0.1, 1, 10]</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>degrees <span class="op">=</span> np.r_[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span>
@@ -246,7 +246,7 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 <p>Ainsi, ces 2 classes du jeu de données iris semble très difficiles à séparer, la méthode de SVM est peu adaptée ici.</p>
 <p><strong>Question 3 (facultative)</strong></p>
 <p>Commençons par générer le jeu de données très déséquilibré :</p>
-<div id="d2f81387" class="cell" data-execution_count="5">
+<div id="3bb86bf0" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="st">"scripts_python"</span>) <span class="co"># pour aller chercher la fonction de svm_source</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -320,8 +320,8 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
- 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
- 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
  1]</code></pre>
@@ -329,28 +329,28 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Compte-rendu_files/figure-html/cell-6-output-2.png" width="569" height="432" class="figure-img"></p>
+<p><img src="Compte-rendu_files/figure-html/cell-6-output-2.png" width="572" height="432" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Compte-rendu_files/figure-html/cell-6-output-3.png" width="569" height="432" class="figure-img"></p>
+<p><img src="Compte-rendu_files/figure-html/cell-6-output-3.png" width="572" height="432" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Compte-rendu_files/figure-html/cell-6-output-4.png" width="569" height="432" class="figure-img"></p>
+<p><img src="Compte-rendu_files/figure-html/cell-6-output-4.png" width="572" height="432" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Sur un jeu de données purement aléatoire, on observe que le paramètre C n’a aucune influence, les frontières n’apparaissent même pas. Ceci est logique car les données sont impossibles à séparer facilement, il n’y a aucune logique sous-jacente à cette répartition des points.</p>
 <p>Si on prend maintenant un jeu de données plus structuré :</p>
-<div id="36c31706" class="cell" data-execution_count="6">
+<div id="b53d74f9" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -421,52 +421,11 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 </div>
 <p>Ici, on voit l’action du paramètre C, la frontière se déplace dans les différents exemples.</p>
 <p><strong>Question 4</strong></p>
-<div id="e9d58fee" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="st">"scripts_python"</span>) <span class="co"># pour aller chercher la fonction de svm_source</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> fetch_lfw_people</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> svm_source <span class="im">import</span> plot_gallery</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>lfw_people <span class="op">=</span> fetch_lfw_people(min_faces_per_person<span class="op">=</span><span class="dv">70</span>, resize<span class="op">=</span><span class="fl">0.4</span>,</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                              color<span class="op">=</span><span class="va">True</span>, funneled<span class="op">=</span><span class="va">False</span>, slice_<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                              download_if_missing<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># introspect the images arrays to find the shapes (for plotting)</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>images <span class="op">=</span> lfw_people.images</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>n_samples, h, w, n_colors <span class="op">=</span> images.shape</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co"># the label to predict is the id of the person</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>target_names <span class="op">=</span> lfw_people.target_names.tolist()</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Pick a pair to classify such as</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> [<span class="st">'Tony Blair'</span>, <span class="st">'Colin Powell'</span>]</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co"># names = ['Donald Rumsfeld', 'Colin Powell']</span></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>idx0 <span class="op">=</span> (lfw_people.target <span class="op">==</span> target_names.index(names[<span class="dv">0</span>]))</span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>idx1 <span class="op">=</span> (lfw_people.target <span class="op">==</span> target_names.index(names[<span class="dv">1</span>]))</span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>images <span class="op">=</span> np.r_[images[idx0], images[idx1]]</span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>n_samples <span class="op">=</span> images.shape[<span class="dv">0</span>]</span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.r_[np.zeros(np.<span class="bu">sum</span>(idx0)), np.ones(np.<span class="bu">sum</span>(idx1))].astype(<span class="bu">int</span>)</span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co"># plot a sample set of the data</span></span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>plot_gallery(images, np.arange(<span class="dv">12</span>))</span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Compte-rendu_files/figure-html/cell-8-output-1.png" width="697" height="640" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
 <p><strong>Question 7</strong></p>
 <p>Le biais introduit par le code se situe dans ces deux lignes :</p>
-<div id="0e3ff50b" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">-=</span> np.mean(X, axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">/=</span> np.std(X, axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="7acd1c67" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">-=</span> np.mean(X, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">/=</span> np.std(X, axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>En effet, ici on standardise les données avant de séparer notre jeu de données en 2 pour le train et le test, ce qui fait que l’on utilise à la fois les données du train et du test pour calculer la moyenne et l’écart-type qui vont ensuite être appliqués à l’ensemble de nos données pour les standardiser. Ceci crée un biais car les données de test ne doivent pas servir pour créer le modèle.</p>
 
