@@ -8,11 +8,17 @@ jupyter: python3
 L'objectif de ce TP est de se familiariser avec la méthode de classification dite de Support Vector Machine (SVM). Dans la suite, on implémentera cette technique sur différents jeux de données réels et simulés grâce au package scikit-learn de Python. On se concentrera principalement sur la compréhension et la maîtrise des principaux paramètres afin d’en ajuster la flexibilité et d’en évaluer l’impact sur les performances.
 
 
+
+
+
+
+
 **Question 1**
 
 ```{python, echo=false}
 import sys
 sys.path.append("scripts_python") # pour aller chercher la fonction de svm_source dans le sous dossier
+from sklearn import svm
 import numpy as np
 from sklearn import datasets
 import matplotlib.pyplot as plt
@@ -20,6 +26,7 @@ from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from svm_source import *
+from time import time
 
 scaler = StandardScaler()
 
@@ -275,10 +282,177 @@ Ici, on voit l'action du paramètre C, la frontière se déplace dans les diffé
 
 **Question 4**
 
+
+
 ```{python}
+#%%
+###############################################################################
+#               Face Recognition Task
+###############################################################################
+"""
+The dataset used in this example is a preprocessed excerpt
+of the "Labeled Faces in the Wild", aka LFW_:
+
+  http://vis-www.cs.umass.edu/lfw/lfw-funneled.tgz (233MB)
+
+  _LFW: http://vis-www.cs.umass.edu/lfw/
+"""
+
+####################################################################
+# Download the data and unzip; then load it as numpy arrays
+from sklearn.datasets import fetch_lfw_people
+
+lfw_people = fetch_lfw_people(
+    min_faces_per_person=70,
+    resize=0.4,
+    color=True,
+    funneled=False,
+    slice_=None,
+    download_if_missing=True
+)
+
+lfw_people = fetch_lfw_people(min_faces_per_person=70, resize=0.4,
+                              color=True, funneled=False, slice_=None,
+                              download_if_missing=True)
+# data_home='.'
+
+# introspect the images arrays to find the shapes (for plotting)
+images = lfw_people.images
+n_samples, h, w, n_colors = images.shape
+
+# the label to predict is the id of the person
+target_names = lfw_people.target_names.tolist()
+
+####################################################################
+# Pick a pair to classify such as
+names = ['Tony Blair', 'Colin Powell']
+# names = ['Donald Rumsfeld', 'Colin Powell']
+
+idx0 = (lfw_people.target == target_names.index(names[0]))
+idx1 = (lfw_people.target == target_names.index(names[1]))
+images = np.r_[images[idx0], images[idx1]]
+n_samples = images.shape[0]
+y = np.r_[np.zeros(np.sum(idx0)), np.ones(np.sum(idx1))].astype(int)
+
+# plot a sample set of the data
+plot_gallery(images, np.arange(12))
+plt.show()
+
+#%%
+####################################################################
+# Extract features
+
+# features using only illuminations
+X = (np.mean(images, axis=3)).reshape(n_samples, -1)
+
+# # or compute features using colors (3 times more features)
+# X = images.copy().reshape(n_samples, -1)
+
+# Scale features
+X -= np.mean(X, axis=0)
+X /= np.std(X, axis=0)
+
+#%%
+####################################################################
+# Split data into a half training and half test set
+X_train, X_test, y_train, y_test, images_train, images_test = \
+    train_test_split(X, y, images, test_size=0.5, random_state=0)
+# X_train, X_test, y_train, y_test = \
+#    train_test_split(X, y, test_size=0.5, random_state=0)
+
+indices = np.random.permutation(X.shape[0])
+train_idx, test_idx = indices[:X.shape[0] // 2], indices[X.shape[0] // 2:]
+X_train, X_test = X[train_idx, :], X[test_idx, :]
+y_train, y_test = y[train_idx], y[test_idx]
+images_train, images_test = images[
+    train_idx, :, :, :], images[test_idx, :, :, :]
+
+####################################################################
+# Quantitative evaluation of the model quality on the test set
 
 ```
 
+```{python}
+
+print("--- Linear kernel ---")
+print("Fitting the classifier to the training set")
+t0 = time()
+
+# fit a classifier (linear) and test all the Cs
+Cs = 10. ** np.arange(-5, 6)
+scores = []
+for C in Cs:
+    clf = SVC(kernel="linear", C=C, random_state=42)
+    clf.fit(X_train, y_train)
+    # on mesure le score sur le jeu de test
+    scores.append(clf.score(X_test, y_test))
+    print("C=%f, score=%f" % (C, scores[-1]))
+print("done in %0.3fs" % (time() - t0))
+y_pred = clf.predict(X_test)
+# get the best C
+
+
+ind = np.argmax(scores)
+print("Best C: {}".format(Cs[ind]))
+
+plt.figure()
+plt.plot(Cs, scores)
+plt.xlabel("Parametres de regularisation C")
+plt.ylabel("Scores d'apprentissage")
+plt.xscale("log")
+plt.tight_layout()
+plt.show()
+print("Best score: {}".format(np.max(scores)))
+
+print("Predicting the people names on the testing set")
+t0 = time()
+
+```
+
+
+Le paramètre de régularisation \(C\) influence directement la performance du SVM.  
+Pour des valeurs très faibles (\(C = 10^{-5}\)), le modèle est trop régularisé et le score de prédiction reste faible ( environs 0,60).  
+Lorsque \(C\) augmente, le score progresse rapidement et atteint un maximum autour de \(C = 10^{-3}\) (score ≈ 0,90).  
+Au-delà, le score se stabilise et n’apporte plus de gain. Le meilleur compromis biais/variance est donc obtenu pour \(C = 0,001\).
+
+
+
+**Question 5**
+
+```{python}
+def run_svm_cv(_X, _y):
+    _indices = np.random.permutation(_X.shape[0])
+    _train_idx, _test_idx = _indices[:_X.shape[0] // 2], _indices[_X.shape[0] // 2:]
+    _X_train, _X_test = _X[_train_idx, :], _X[_test_idx, :]
+    _y_train, _y_test = _y[_train_idx], _y[_test_idx]
+
+    _parameters = {'kernel': ['linear'], 'C': list(np.logspace(-3, 3, 5))}
+    _svr = SVC()
+    _clf_linear = GridSearchCV(_svr, _parameters)
+    _clf_linear.fit(_X_train, _y_train)
+
+    print('Generalization score for linear kernel: %s, %s \n' %
+          (_clf_linear.score(_X_train, _y_train), _clf_linear.score(_X_test, _y_test)))
+
+print("Score sans variable de nuisance")
+
+run_svm_cv(X,y)
+
+print("Score avec variable de nuisance")
+n_features = X.shape[1]
+# On rajoute des variables de nuisances
+sigma = 1
+noise = sigma * np.random.randn(n_samples, 50, ) 
+#with gaussian coefficients of std sigma
+X_noisy = np.concatenate((X, noise), axis=1)
+X_noisy = X_noisy[np.random.permutation(X.shape[0])]
+
+run_svm_cv(X_noisy,y)
+
+```
+
+
+L’ajout de variables de nuisance dégrade nettement la performance du SVM. En effet, si le score d’entraînement reste parfait (sur-apprentissage), le score de généralisation chute fortement (de 0.89 à 0.58 dans notre expérience).
 
 **Question 7**
 
