@@ -278,8 +278,6 @@ for C in Cs:
     scores.append(clf.score(X_test, y_test))
     print("C=%f, score=%f" % (C, scores[-1]))
 print("done in %0.3fs" % (time() - t0))
-y_pred = clf.predict(X_test)
-# get the best C
 
 
 ind = np.argmax(scores)
@@ -299,7 +297,8 @@ t0 = time()
 
 #%%
 # predict labels for the X_test images with the best classifier
-clf = clfs[ind]   # on récupère le meilleur classifieur trouvé
+clf = SVC(kernel="linear", C=Cs[ind], random_state=42)
+clf.fit(X_train, y_train)
 y_pred = clf.predict(X_test)
 
 print("done in %0.3fs" % (time() - t0))
