@@ -1,6 +1,8 @@
 ---
 title: "Compte rendu du TP SVM"
-format: html
+format:
+  html: default
+  pdf: default
 author: "Fabian Condamy et Samy M'Rad"
 jupyter: python3
 ---
@@ -8,28 +10,34 @@ jupyter: python3
 L'objectif de ce TP est de se familiariser avec la méthode de classification dite de Support Vector Machine (SVM). Dans la suite, on implémentera cette technique sur différents jeux de données réels et simulés grâce au package scikit-learn de Python. On se concentrera principalement sur la compréhension et la maîtrise des principaux paramètres afin d’en ajuster la flexibilité et d’en évaluer l’impact sur les performances.
 
 
-
-
-
-
-
 **Question 1**
 
-```{python, echo=false}
+```{python}
+#| echo: false
+#| # Importation des dépendances
 import sys
 sys.path.append("scripts_python") # pour aller chercher la fonction de svm_source dans le sous dossier
-from sklearn import svm
 import numpy as np
-from sklearn import datasets
 import matplotlib.pyplot as plt
 from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import StandardScaler
+
 from svm_source import *
+from sklearn import svm
+from sklearn import datasets
+from sklearn.utils import shuffle
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.datasets import fetch_lfw_people
+from sklearn.decomposition import PCA
 from time import time
 
 scaler = StandardScaler()
 
+import warnings
+warnings.filterwarnings("ignore")
+```
+
+```{python}
 # Chargement du jeu de données
 iris = datasets.load_iris()
 X = iris.data
@@ -90,6 +98,8 @@ On va maintenant voir si une méthode polynomiale peut améliorer ce score.
 
 **Question 2**
 
+Passons au noyau polynomial maintenant :
+
 ```{python}
 # On fait la même chose que précédemment mais avec un svm polynomial
 X_train, X_test, y_train, y_test = train_test_split(
@@ -116,7 +126,7 @@ frontiere(f_poly, X, y)
 plt.title("Noyau polynomial")
 ```
 
-Pour un noyau polynomial et cet aléa, on trouve un score de 0,6, ce qui est encore plus faible que pour le noyau linéaire. Ce résultat peut sembler assez paradoxal de prime abord, mais il semble en réalité logique au vu de la structure des données, le modèle a dû certainement overfitter.
+Pour un noyau polynomial et cet aléa, on trouve un score de 0,6, ce qui est encore plus faible que pour le noyau linéaire. Ce résultat peut sembler assez paradoxal de prime abord, mais il semble en réalité logique au vu de la structure des données. Le modèle polynomial doit certainement complexifier trop la frontière tout en étant mal régularisé. 
 
 ```{python}
 # Paramètres que l'on va tester pour trouver les meilleurs
@@ -165,33 +175,25 @@ plt.tight_layout()
 plt.draw()
 ```
 
-Ainsi, ces 2 classes du jeu de données iris semblent très difficiles à séparer, la méthode de SVM est peu adaptée ici.
+Ainsi, ces 2 classes du jeu de données iris semblent très difficiles à séparer, la méthode de SVM est peu adaptée ici, que l'on emploie un SVM linéaire ou polynomial.
 
 **Question 3 (facultative)**
 
-Commençons par générer le jeu de données très déséquilibré :
-
+Commençons par générer le jeu de données très déséquilibré, sans faire vraiment attention à la répartition des points :
 
 ```{python}
-import sys
-sys.path.append("scripts_python") # pour aller chercher la fonction de svm_source
-
-import numpy as np
-from sklearn.svm import SVC
-import matplotlib.pyplot as plt
-from svm_source import *
 # Création du jeu de données
-
 n = 1000 # nombre d'observations
 classes = np.random.choice([0,1], size=n, p=[0.9,0.1]) # classes 1 et 2 avec respectivement p=90% et p=10%
-
-# Affichage pour vérifier
-print(np.sort(classes))
 
 # Variables pour SVM
 X = np.random.randn(n, 2)
 Y = classes
+```
 
+On obtient les graphes suivants :
+
+```{python}
 def plot_svm(C_value):
     clf = SVC(kernel='linear', C=C_value)
     clf.fit(X, Y)
@@ -226,13 +228,11 @@ for C in [1, 0.1, 0.01]:
 
 Sur un jeu de données purement aléatoire, on observe que le paramètre C n'a aucune influence, les frontières n'apparaissent même pas. Ceci est logique car les données sont impossibles à séparer facilement, il n'y a aucune logique sous-jacente à cette répartition des points.
 
-Si on prend maintenant un jeu de données plus structuré :
+Si on prend maintenant un jeu de données plus structuré, on obtient :
 
 ```{python}
-import numpy as np
-from sklearn.svm import SVC
-import matplotlib.pyplot as plt
-
+#| echo: false
+#| 
 # Génération d'un dataset structuré (mais déséquilibré)
 n_majoritaire = 90
 n_minoritaire = 10
@@ -277,11 +277,7 @@ for C in [1, 0.1, 0.01]:
     plot_svm(C)
 ```
 
-Ici, on voit l'action du paramètre C, la frontière se déplace dans les différents exemples. 
-
-
-
-
+Ici, on voit l'action du paramètre C, la frontière se déplace dans les différents exemples. Quand C devient vraiment trop petit, la frontière n'est plus du tout au bon endroit : le modèle accepte trop les erreurs même s'il n'y a plus aucune variance. Ainsi, pour un jeu de données trop disproportionné, le C ne doit pas être trop petit. 
 
 
 **Question 4**
@@ -482,7 +478,39 @@ run_svm_cv(X_noisy,y)
 ```
 
 
-L’ajout de variables de nuisance dégrade nettement la performance du SVM. En effet, si le score d’entraînement reste parfait (sur-apprentissage), le score de généralisation chute fortement (de 0,90 à 0,60 dans notre expérience).
+L’ajout de variables de nuisance dégrade nettement la performance du SVM. En effet, si le score d’entraînement reste parfait (sur-apprentissage), le score de généralisation chute fortement (de 0,90 à 0,60 dans notre expérience) comme attendu.
+
+**Question 6**
+
+```{python}
+print("Score apres reduction de dimension")
+
+# changement de la fonction pour qu'elle soit plus rapide
+def run_svm_cv(_X, _y):
+    _indices = np.random.permutation(_X.shape[0])
+    _train_idx, _test_idx = _indices[:_X.shape[0] // 2], _indices[_X.shape[0] // 2:]
+    _X_train, _X_test = _X[_train_idx, :], _X[_test_idx, :]
+    _y_train, _y_test = _y[_train_idx], _y[_test_idx]
+
+    _parameters = {'kernel': ['linear'], 'C': list(np.logspace(-3, 3, 5))}
+    _svr = SVC()
+    _clf_linear = GridSearchCV(_svr, _parameters, cv=3, n_jobs=-1)
+    _clf_linear.fit(_X_train, _y_train)
+
+    print('Generalization score for linear kernel: %s, %s \n' %
+          (_clf_linear.score(_X_train, _y_train), _clf_linear.score(_X_test, _y_test)))
+
+n_components = 5  # jouer avec ce parametre
+pca = PCA(n_components=n_components).fit(X_noisy)
+
+X_reduced = pca.fit_transform(X_noisy)
+
+# On relance le SVM sur les données réduites
+run_svm_cv(X_reduced, y)
+```
+
+On remarque que nous obtenons un score très médiocre d'environ 0,60, ce qui est plus faible qu'auparavant. En effet, la PCA compresse l'information et est donc moins précise. 
+En résultat, on a moins d'overfitting, mais également une moins bonne performance.
 
 **Question 7**
 
@@ -499,4 +527,4 @@ En effet, ici on standardise les données avant de séparer notre jeu de donnée
 
 **Conclusion**
 
-Ce TP nous a permis de nous familiariser avec le package scikit-learn de Python en l'utilisant pour effectuer des analyses sur différents types de jeux de données. L'influence du paramètre C a été étudiée en profondeur, revélant son importance dans le traçage final car il détermine le compromis entre la capacité du modèle à classifier correctement la partie d'apprentissage et la maximisation de la marge. 
+Ce TP nous a permis de nous familiariser avec le package scikit-learn de Python en l'utilisant pour effectuer des analyses sur différents types de jeux de données. L'influence du paramètre C a été étudiée en profondeur, revélant son importance dans le traçage final car il détermine le compromis entre la capacité du modèle à classifier correctement la partie d'apprentissage et la maximisation de la marge. Nous avons vu également que la méthode de SVM peut être implémentée sur des jeux de données traditionnels mais aussi sur des images. 

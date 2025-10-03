@@ -359,7 +359,7 @@ run_svm_cv(X_noisy,y)
 print("Score apres reduction de dimension")
 
 # changement de la fonction pour qu'elle soit plus rapide (environ 5min)
-def run_svm_cv(_X, _y):
+def run_svm_cv_fast(_X, _y):
     _indices = np.random.permutation(_X.shape[0])
     _train_idx, _test_idx = _indices[:_X.shape[0] // 2], _indices[_X.shape[0] // 2:]
     _X_train, _X_test = _X[_train_idx, :], _X[_test_idx, :]
@@ -379,6 +379,6 @@ pca = PCA(n_components=n_components).fit(X_noisy)
 X_reduced = pca.fit_transform(X_noisy)
 
 # On relance le SVM sur les données réduites
-run_svm_cv(X_reduced, y)
+run_svm_cv_fast(X_reduced, y)
 
 # %%
