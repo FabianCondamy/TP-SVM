@@ -2,7 +2,9 @@
 title: "Compte rendu du TP SVM"
 author: "Fabian Condamy et Samy M'Rad"
 jupyter: python3
-format: pdf
+format: 
+  pdf:
+    code-overflow: wrap 
 ---
 
 L'objectif de ce TP est de se familiariser avec la méthode de classification dite de Support Vector Machine (SVM). Dans la suite, on implémentera cette technique sur différents jeux de données réels et simulés grâce au package scikit-learn de Python. On se concentrera principalement sur la compréhension et la maîtrise des principaux paramètres afin d’en ajuster la flexibilité et d’en évaluer l’impact sur les performances.
@@ -507,8 +509,37 @@ X_reduced = pca.fit_transform(X_noisy)
 run_svm_cv(X_reduced, y)
 ```
 
-On remarque que nous obtenons un score très médiocre d'environ 0,60, ce qui est plus faible qu'auparavant. En effet, la PCA compresse l'information et est donc moins précise. 
-En résultat, on a moins d'overfitting, mais également une moins bonne performance.
+On remarque que nous obtenons un score très médiocre d'environ 0,60, ce qui est plus faible qu'auparavant. En effet, ici pour n=5, la PCA compresse beaucoup l'information et est donc moins précise car elle projette dans un espace de dimension plus faible. 
+En résultat, on a moins d'overfitting, mais également une moins bonne performance du fait d'une information moindre.
+
+```{python}
+print("Score apres reduction de dimension")
+
+# changement de la fonction pour qu'elle soit plus rapide
+def run_svm_cv(_X, _y):
+    _indices = np.random.permutation(_X.shape[0])
+    _train_idx, _test_idx = _indices[:_X.shape[0] // 2], _indices[_X.shape[0] // 2:]
+    _X_train, _X_test = _X[_train_idx, :], _X[_test_idx, :]
+    _y_train, _y_test = _y[_train_idx], _y[_test_idx]
+
+    _parameters = {'kernel': ['linear'], 'C': list(np.logspace(-3, 3, 5))}
+    _svr = SVC()
+    _clf_linear = GridSearchCV(_svr, _parameters, cv=3, n_jobs=-1)
+    _clf_linear.fit(_X_train, _y_train)
+
+    print('Generalization score for linear kernel: %s, %s \n' %
+          (_clf_linear.score(_X_train, _y_train), _clf_linear.score(_X_test, _y_test)))
+
+n_components = 20 # jouer avec ce parametre
+pca = PCA(n_components=n_components).fit(X_noisy)
+
+X_reduced = pca.fit_transform(X_noisy)
+
+# On relance le SVM sur les données réduites
+run_svm_cv(X_reduced, y)
+```
+
+Pour un nombre de composantes plus grandes, 20 ici, on obtient une meilleure performance, ce qui était attendu. Il faut toutefois faire attention à ne pas trop augmenter ce nombre car après la PCA n'aura plus aucun intérêt puisqu'on se retrouvera avec le même modèle que sans. Il y a donc un compromis à faire entre réduction de dimension (moins de bruit) et préservation de l’information.
 
 **Question 7**
 
