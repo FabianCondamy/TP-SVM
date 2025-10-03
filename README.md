@@ -22,3 +22,9 @@ pip install -r requirements.txt
 ```
 
 ### 3. **Lancer le fichier Compte-rendu.qmd**
+
+### 4. **Utiliser quarto pour render le fichier**
+
+```bash
+quarto render Compte-rendu.qmd
+```
