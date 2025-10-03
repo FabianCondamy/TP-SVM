@@ -135,7 +135,7 @@ window.Quarto = {
 
 <p>L’objectif de ce TP est de se familiariser avec la méthode de classification dite de Support Vector Machine (SVM). Dans la suite, on implémentera cette technique sur différents jeux de données réels et simulés grâce au package scikit-learn de Python. On se concentrera principalement sur la compréhension et la maîtrise des principaux paramètres afin d’en ajuster la flexibilité et d’en évaluer l’impact sur les performances.</p>
 <p><strong>Question 1</strong></p>
-<div id="1381e974" class="cell" data-execution_count="2">
+<div id="f82f764e" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Chargement du jeu de données</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>iris <span class="op">=</span> datasets.load_iris()</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> iris.data</span>
@@ -173,7 +173,7 @@ window.Quarto = {
 <div class="cell-output cell-output-stdout">
 <pre><code>Score du modèle linéaire : 0.64</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="46">
+<div class="cell-output cell-output-display" data-execution_count="2">
 <pre><code>Text(0.5, 1.0, 'linear kernel')</code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -185,7 +185,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Pour cet aléa précis, on trouve un score de 0,64, ce qui est faible. Comme on peut le voir sur le jeu de données iris, les deux classes sont bien mélangées, ce qui peut expliquer ce score médiocre.</p>
-<div id="bc1cf12a" class="cell" data-execution_count="3">
+<div id="38a87e1f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Définition des hyperparamètres à tester</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>parameters <span class="op">=</span> {<span class="st">'kernel'</span>: [<span class="st">'linear'</span>], <span class="st">'C'</span>: <span class="bu">list</span>(np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">200</span>))}</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -207,7 +207,7 @@ window.Quarto = {
 <p>Pour le score généralisé, on trouve une performance de 0,707 pour la partie d’apprentissage et 0,680 pour la partie de test. Ainsi, même en essayant d’optimiser le noyau linéaire, la précision est faible. On va maintenant voir si une méthode polynomiale peut améliorer ce score.</p>
 <p><strong>Question 2</strong></p>
 <p>Passons au noyau polynomial maintenant :</p>
-<div id="5811c421" class="cell" data-execution_count="4">
+<div id="1754804f" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On fait la même chose que précédemment mais avec un svm polynomial</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    X, y, test_size<span class="op">=</span><span class="fl">0.25</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>y</span>
@@ -234,7 +234,7 @@ window.Quarto = {
 <div class="cell-output cell-output-stdout">
 <pre><code>Score du modèle linéaire : 0.6</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="48">
+<div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>Text(0.5, 1.0, 'Noyau polynomial')</code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -246,7 +246,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Pour un noyau polynomial et cet aléa, on trouve un score de 0,6, ce qui est encore plus faible que pour le noyau linéaire. Ce résultat peut sembler assez paradoxal de prime abord, mais il semble en réalité logique au vu de la structure des données. Le modèle polynomial doit certainement complexifier trop la frontière tout en étant mal régularisé.</p>
-<div id="355f8bb8" class="cell" data-execution_count="5">
+<div id="91ef5ab9" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paramètres que l'on va tester pour trouver les meilleurs</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>Cs <span class="op">=</span> <span class="bu">list</span>(np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">5</span>))</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>gammas <span class="op">=</span> <span class="fl">10.</span> <span class="op">**</span> np.arange(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>) </span>
@@ -271,7 +271,7 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 </div>
 <p>Pour les paramètres généralisés trouvés (c = 0,03 ; degré = 1 et gamma = 1), on trouve un score de 0,707 pour la partie d’apprentissage et 0,64 pour le test. Ainsi, on a le même score généralisé que pour le noyau linéaire pour la partie apprentissage, mais lorsqu’on l’applique à la partie de test, on perd plus en précision que pour le modèle linéaire.</p>
 <p>On obtient les graphes suivants, qui sont donc identiques car le polynôme optimal est de degré 1 :</p>
-<div id="47626cb1" class="cell" data-execution_count="6">
+<div id="854f3c4c" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Affichage pour comparaison</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_linear(xx):</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> svm_linear_opt.predict(xx.reshape(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>))</span>
@@ -303,7 +303,7 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 <p>Ainsi, ces 2 classes du jeu de données iris semblent très difficiles à séparer, la méthode de SVM est peu adaptée ici, que l’on emploie un SVM linéaire ou polynomial.</p>
 <p><strong>Question 3 (facultative)</strong></p>
 <p>Commençons par générer le jeu de données très déséquilibré, sans faire vraiment attention à la répartition des points :</p>
-<div id="9a75f2b6" class="cell" data-execution_count="7">
+<div id="2c796e81" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Création du jeu de données</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">1000</span> <span class="co"># nombre d'observations</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>classes <span class="op">=</span> np.random.choice([<span class="dv">0</span>,<span class="dv">1</span>], size<span class="op">=</span>n, p<span class="op">=</span>[<span class="fl">0.9</span>,<span class="fl">0.1</span>]) <span class="co"># classes 1 et 2 avec respectivement p=90% et p=10%</span></span>
@@ -313,7 +313,7 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> classes</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>On obtient les graphes suivants :</p>
-<div id="1cb93e40" class="cell" data-execution_count="8">
+<div id="f10f8606" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_svm(C_value):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    clf <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">'linear'</span>, C<span class="op">=</span>C_value)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    clf.fit(X, Y)</span>
@@ -368,7 +368,7 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 </div>
 <p>Sur un jeu de données purement aléatoire, on observe que le paramètre C n’a aucune influence, les frontières n’apparaissent même pas. Ceci est logique car les données sont impossibles à séparer facilement, il n’y a aucune logique sous-jacente à cette répartition des points.</p>
 <p>Si on prend maintenant un jeu de données plus structuré, on obtient :</p>
-<div id="4f9bb4dd" class="cell" data-execution_count="9">
+<div id="aa6a5fad" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -394,7 +394,7 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 <p>Ici, on voit l’action du paramètre C, la frontière se déplace dans les différents exemples. Quand C devient vraiment trop petit, la frontière n’est plus du tout au bon endroit : le modèle accepte trop les erreurs même s’il n’y a plus aucune variance. Ainsi, pour un jeu de données trop disproportionné, le C ne doit pas être trop petit.</p>
 <p><strong>Question 4</strong></p>
 <p>Dans cette question, nous étudions l’influence du paramètre de régularisation C C sur les performances du SVM. Pour cela, nous testons différentes valeurs de C C sur les images de deux individus du jeu de données et analysons l’évolution de l’accuracy en fonction de ce paramètre.</p>
-<div id="8bfb6a7e" class="cell" data-execution_count="10">
+<div id="95de3a28" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -403,7 +403,7 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 </div>
 </div>
 </div>
-<div id="6aa726ed" class="cell" data-execution_count="11">
+<div id="88f18758" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Q4 - Influence du paramètre C</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- Linear kernel ---"</span>)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Fitting the classifier to the training set"</span>)</span>
@@ -445,22 +445,22 @@ Score généralisé pour le noyau polynomial : Train : 0.707 | Test : 0.640</cod
 <div class="cell-output cell-output-stdout">
 <pre><code>--- Linear kernel ---
 Fitting the classifier to the training set
-C=0.000010, score=0.631579
-C=0.000100, score=0.873684
-C=0.001000, score=0.931579
-C=0.010000, score=0.931579
-C=0.100000, score=0.931579
-C=1.000000, score=0.931579
-C=10.000000, score=0.931579
-C=100.000000, score=0.931579
-C=1000.000000, score=0.931579
-C=10000.000000, score=0.931579
-C=100000.000000, score=0.931579
-done in 2.486s
-Best C: 0.001
-Best score: 0.9315789473684211
+C=0.000010, score=0.636842
+C=0.000100, score=0.905263
+C=0.001000, score=0.921053
+C=0.010000, score=0.926316
+C=0.100000, score=0.926316
+C=1.000000, score=0.926316
+C=10.000000, score=0.926316
+C=100.000000, score=0.926316
+C=1000.000000, score=0.926316
+C=10000.000000, score=0.926316
+C=100000.000000, score=0.926316
+done in 2.718s
+Best C: 0.01
+Best score: 0.9263157894736842
 Chance level : 0.6210526315789474
-Accuracy : 0.9315789473684211</code></pre>
+Accuracy : 0.9263157894736842</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -474,7 +474,7 @@ Accuracy : 0.9315789473684211</code></pre>
 Pour des valeurs très faibles <span class="math inline">\(C = 10^{-5}\)</span>., le modèle est trop régularisé et le score de prédiction reste faible ( environs 0,60).<br>
 Lorsque <span class="math inline">\(C\)</span> augmente, le score progresse rapidement et atteint un maximum autour de <span class="math inline">\(C = 10^{-3}\)</span> (score environ de 0,90).<br>
 Au-delà, le score se stabilise et n’apporte plus de gain. Le meilleur compromis biais/variance est donc obtenu pour <span class="math inline">\(C = 0,001\)</span>.</p>
-<div id="802a05be" class="cell" data-execution_count="12">
+<div id="55d8da6d" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -492,7 +492,7 @@ Au-delà, le score se stabilise et n’apporte plus de gain. Le meilleur comprom
 </div>
 <p>La galerie d’images illustre les prédictions du SVM sur le jeu de test en comparant la classe prédite et la classe réelle. On observe que la majorité des visages sont correctement identifiés, même si certaines confusions persistent entre individus proches. La visualisation des coefficients du classifieur met en évidence les zones du visage jugées discriminantes par le modèle (contours, yeux, bouche), ce qui permet d’interpréter qualitativement la décision.</p>
 <p><strong>Question 5</strong></p>
-<div id="a97d8d02" class="cell" data-execution_count="13">
+<div id="6c498637" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_svm_cv(_X, _y):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    _indices <span class="op">=</span> np.random.permutation(_X.shape[<span class="dv">0</span>])</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    _train_idx, _test_idx <span class="op">=</span> _indices[:_X.shape[<span class="dv">0</span>] <span class="op">//</span> <span class="dv">2</span>], _indices[_X.shape[<span class="dv">0</span>] <span class="op">//</span> <span class="dv">2</span>:]</span>
@@ -526,13 +526,13 @@ Au-delà, le score se stabilise et n’apporte plus de gain. Le meilleur comprom
 Generalization score for linear kernel: 1.0, 0.9105263157894737 
 
 Score avec variable de nuisance
-Generalization score for linear kernel: 1.0, 0.5157894736842106 
+Generalization score for linear kernel: 1.0, 0.46842105263157896 
 </code></pre>
 </div>
 </div>
 <p>L’ajout de variables de nuisance dégrade nettement la performance du SVM. En effet, si le score d’entraînement reste parfait (sur-apprentissage), le score de généralisation chute fortement (de 0,90 à 0,60 dans notre expérience) comme attendu.</p>
 <p><strong>Question 6</strong></p>
-<div id="72e46e8b" class="cell" data-execution_count="14">
+<div id="afde0be7" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Score apres reduction de dimension"</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># changement de la fonction pour qu'elle soit plus rapide</span></span>
@@ -559,14 +559,14 @@ Generalization score for linear kernel: 1.0, 0.5157894736842106
 <span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>run_svm_cv(X_reduced, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Score apres reduction de dimension
-Generalization score for linear kernel: 0.6, 0.6421052631578947 
+Generalization score for linear kernel: 0.5947368421052631, 0.6473684210526316 
 </code></pre>
 </div>
 </div>
 <p>On remarque que nous obtenons un score très médiocre d’environ 0,60, ce qui est plus faible qu’auparavant. En effet, la PCA compresse l’information et est donc moins précise. En résultat, on a moins d’overfitting, mais également une moins bonne performance.</p>
 <p><strong>Question 7</strong></p>
 <p>Le biais introduit par le code se situe dans ces deux lignes :</p>
-<div id="6c6d8c69" class="cell" data-execution_count="15">
+<div id="bb833952" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardisation des données</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">-=</span> np.mean(X, axis<span class="op">=</span><span class="dv">0</span>) <span class="co"># on soustrait la moyenne</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">/=</span> np.std(X, axis<span class="op">=</span><span class="dv">0</span>) <span class="co"># on divise par l'écart type</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
