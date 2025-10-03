@@ -123,9 +123,33 @@ print("Score généralisé pour le noyau polynomial : Train : %.3f | Test : %.3f
        svm_poly_opt.score(X_test, y_test)))
 ```
 
-Pour les paramètres généralisés, on trouve un score de 0,707 pour la partie d'apprentissage et 0,64 pour le test. Ainsi, on a le même score généralisé que pour le noyau linéaire pour la partie apprentissage, mais lorsqu'on l'applique à la partie de test, on perd plus en précision que pour le modèle linéaire.
+Pour les paramètres généralisés trouvés (c = 0,03 ; degré = 1 et gamma = 1), on trouve un score de 0,707 pour la partie d'apprentissage et 0,64 pour le test. Ainsi, on a le même score généralisé que pour le noyau linéaire pour la partie apprentissage, mais lorsqu'on l'applique à la partie de test, on perd plus en précision que pour le modèle linéaire.
 
-Ainsi, ces 2 classes du jeu de données iris semble très difficiles à séparer, la méthode de SVM est peu adaptée ici.
+On obtient les graphes suivants, qui sont donc identiques car le polynôme optimal est de degré 1 :
+
+```{python}
+def f_linear(xx):
+    return svm_linear_opt.predict(xx.reshape(1, -1))
+
+def f_poly(xx):
+    return svm_poly_opt.predict(xx.reshape(1, -1))
+
+plt.ion()
+plt.figure(figsize=(15, 5))
+
+plt.subplot(121)
+frontiere(f_linear, X, y)
+plt.title("linear kernel")
+
+plt.subplot(122)
+frontiere(f_poly, X, y)
+
+plt.title("polynomial kernel")
+plt.tight_layout()
+plt.draw()
+```
+
+Ainsi, ces 2 classes du jeu de données iris semblent très difficiles à séparer, la méthode de SVM est peu adaptée ici.
 
 **Question 3 (facultative)**
 
