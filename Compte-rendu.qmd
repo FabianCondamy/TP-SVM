@@ -23,6 +23,7 @@ from svm_source import *
 
 scaler = StandardScaler()
 
+# Chargement du jeu de données
 iris = datasets.load_iris()
 X = iris.data
 X = scaler.fit_transform(X)
@@ -30,19 +31,23 @@ y = iris.target
 X = X[y != 0, :2]
 y = y[y != 0]
 
+# Fonction train_test_split du package sklearn
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.25, random_state=42, stratify=y
 )
 
+# Réalisation du SVM linéaire
 svm_linear = SVC(kernel='linear')
-svm_linear.fit(X_train, y_train)
+svm_linear.fit(X_train, y_train) # fitting sur la partie train
 y_pred_linear = svm_linear.predict(X_test)
 score_linear = svm_linear.score(X_test, y_test)
 print('Score du modèle linéaire : %s' % score_linear)
 
+# Fonction de décision pour le traçage
 def f_linear(xx):
     return svm_linear.predict(xx.reshape(1, -1))
 
+# Plot 
 plt.ion()
 plt.figure(figsize=(15, 5))
 plt.subplot(131)
@@ -60,13 +65,14 @@ Pour cet aléa précis, on trouve un score de 0,64, ce qui est faible. Comme on 
 # Définition des hyperparamètres à tester
 parameters = {'kernel': ['linear'], 'C': list(np.logspace(-3, 3, 200))}
 
-# Créer le modèle SVM (ici juste l'objet, le kernel sera défini par GridSearchCV)
+# Créer le modèle SVM (objet vide que l'on complétera par la suite)
 svm = SVC()
 
-# GridSearchCV pour trouver le meilleur C
-svm_linear_opt = GridSearchCV(svm, parameters, cv=5)  # cv=5 : validation croisée 5 folds
-svm_linear_opt.fit(X_train, y_train)  # entraîner sur le train set
+# fonction GridSearchCV de sklearn pour trouver le meilleur C
+svm_linear_opt = GridSearchCV(svm, parameters, cv=5)  # cv=5 : validation croisée 5 fois
+svm_linear_opt.fit(X_train, y_train) 
 
+# Affichage du score
 print("Score généralisé pour le noyau linéaire : Train : %.3f | Test : %.3f" %
       (svm_linear_opt.score(X_train, y_train),
        svm_linear_opt.score(X_test, y_test)))
@@ -78,6 +84,7 @@ On va maintenant voir si une méthode polynomiale peut améliorer ce score.
 **Question 2**
 
 ```{python}
+# On fait la même chose que précédemment mais avec un svm polynomial
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.25, random_state=42, stratify=y
 )
@@ -105,12 +112,13 @@ plt.title("Noyau polynomial")
 Pour un noyau polynomial et cet aléa, on trouve un score de 0,6, ce qui est encore plus faible que pour le noyau linéaire. Ce résultat peut sembler assez paradoxal de prime abord, mais il semble en réalité logique au vu de la structure des données, le modèle a dû certainement overfitter.
 
 ```{python}
+# Paramètres que l'on va tester pour trouver les meilleurs
 Cs = list(np.logspace(-3, 3, 5))
-gammas = 10. ** np.arange(-2, 2)  # gamma = [0.01, 0.1, 1, 10]
+gammas = 10. ** np.arange(-2, 2) 
 degrees = np.r_[1, 2, 3]
-
 parameters = {'kernel': ['poly'], 'C': Cs, 'gamma': gammas, 'degree': degrees}
 
+# idem que précédemment
 svm = SVC()
 
 svm_poly_opt = GridSearchCV(svm, parameters, cv=5)
@@ -128,6 +136,7 @@ Pour les paramètres généralisés trouvés (c = 0,03 ; degré = 1 et gamma = 1
 On obtient les graphes suivants, qui sont donc identiques car le polynôme optimal est de degré 1 :
 
 ```{python}
+# Affichage pour comparaison
 def f_linear(xx):
     return svm_linear_opt.predict(xx.reshape(1, -1))
 
@@ -276,8 +285,14 @@ Ici, on voit l'action du paramètre C, la frontière se déplace dans les diffé
 Le biais introduit par le code se situe dans ces deux lignes :
 
 ```{python}
-X -= np.mean(X, axis=0)
-X /= np.std(X, axis=0)
+# Standardisation des données
+X -= np.mean(X, axis=0) # on soustrait la moyenne
+X /= np.std(X, axis=0) # on divise par l'écart type
 ```
 
 En effet, ici on standardise les données avant de séparer notre jeu de données en 2 pour le train et le test, ce qui fait que l'on utilise à la fois les données du train et du test pour calculer la moyenne et l'écart-type qui vont ensuite être appliqués à l'ensemble de nos données pour les standardiser. Ceci crée un biais car les données de test ne doivent pas servir pour créer le modèle.
+
+
+**Conclusion**
+
+Ce TP nous a permis de nous familiariser avec le package scikit-learn de Python en l'utilisant pour effectuer des analyses sur différents types de jeux de données. L'influence du paramètre C a été étudiée en profondeur, revélant son importance dans le traçage final car il détermine le compromis entre la capacité du modèle à classifier correctement la partie d'apprentissage et la maximisation de la marge. 
