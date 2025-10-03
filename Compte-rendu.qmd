@@ -539,7 +539,7 @@ X_reduced = pca.fit_transform(X_noisy)
 run_svm_cv(X_reduced, y)
 ```
 
-Pour un nombre de composantes plus grandes, 20 ici, on obtient une meilleure performance, ce qui était attendu. Il faut toutefois faire attention à ne pas trop augmenter ce nombre car après la PCA n'aura plus aucun intérêt puisqu'on se retrouvera avec le même modèle que sans. Il y a donc un compromis à faire entre réduction de dimension (moins de bruit) et préservation de l’information.
+Pour un nombre de composantes plus grandes, 20 ici, on obtient à peine une meilleure performance. Ainsi, augmenter ce paramètre ne semble pas augmenter beaucoup nos résultats. De plus, il faut faire attention à ne pas trop augmenter ce nombre car après la PCA n'aura plus aucun intérêt puisqu'on se retrouvera avec le même modèle que sans. Il y a donc un compromis à faire entre réduction de dimension (moins de bruit) et préservation de l’information.
 
 **Question 7**
 
